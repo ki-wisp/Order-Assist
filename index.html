@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="my">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8fc">
+<title>Viber Order Assistant</title>
+
+<style>
+:root {
+  color-scheme: light;
+  --ink: #202536;
+  --muted: #687086;
+  --line: #dfe3ed;
+  --bg: #f7f8fc;
+  --accent: #4f46e5;
+  --bad: #b42318;
+  --good: #067647;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.45 -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+main {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 16px 12px 40px;
+}
+
+h1 { font-size: 24px; margin: 4px 0 5px; }
+h2 { font-size: 18px; margin: 0 0 12px; }
+p { margin: 5px 0 12px; }
+
+.muted, .hint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px #18223008;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+input, select, textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbd1df;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font: inherit;
+  color: var(--ink);
+  background: white;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #a5b4fc;
+  border-color: var(--accent);
+}
+
+textarea {
+  min-height: 78px;
+  resize: vertical;
+}
+
+.full { grid-column: 1 / -1; }
+
+.product {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px;
+  margin: 12px 0;
+  background: #fcfcff;
+}
+
+.product-head, .variant-head, .actions, .summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.product-head { margin-bottom: 10px; }
+
+.variant {
+  background: white;
+  border: 1px dashed #cbd1df;
+  border-radius: 10px;
+  padding: 11px;
+  margin: 10px 0;
+}
+
+.variant-head {
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  min-height: 43px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid #a5b4fc;
+  outline-offset: 2px;
+}
+
+button.primary {
+  color: white;
+  background: var(--accent);
+}
+
+button.secondary {
+  background: #eef0ff;
+  color: #3730a3;
+}
+
+button.ghost {
+  background: #f2f4f7;
+  color: #344054;
+}
+
+button.danger {
+  background: #fff0ef;
+  color: var(--bad);
+  padding: 7px 10px;
+  min-height: 34px;
+  font-size: 13px;
+}
+
+button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.actions button { flex: 1 1 140px; }
+
+.summary {
+  background: #f0f5ff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.summary-row { padding: 4px 0; }
+
+.warning, .success {
+  border-radius: 10px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.warning {
+  color: var(--bad);
+  background: #fff3f2;
+  border: 1px solid #fecdca;
+}
+
+.success {
+  color: var(--good);
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+}
+
+#output {
+  min-height: 280px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+}
+
+.pill {
+  font-size: 12px;
+  background: #f2f4f7;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #475467;
+}
+
+@media (max-width: 560px) {
+  main { padding: 12px 10px 28px; }
+  .grid { grid-template-columns: 1fr; }
+  .full { grid-column: auto; }
+  h1 { font-size: 22px; }
+  .card { padding: 13px; }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<header>
+  <h1>Viber Order Assistant</h1>
+  <p class="muted">
+    အော်ဒါအချက်အလက်ဖြည့်ပါ → အမှားစစ်ပါ → Viber အတွက် စာသားကူးပါ။
+    Facebook/Viber နဲ့ တိုက်ရိုက်မချိတ်ထားပါ။
+  </p>
+</header>
+
+<section class="card">
+  <h2>၁။ Customer အချက်အလက်</h2>
+
+  <div class="grid">
+    <div class="field">
+      <label for="customer">Customer အမည် *</label>
+      <input id="customer" placeholder="ဥပမာ May">
+    </div>
+
+    <div class="field">
+      <label for="source">မှာယူသည့်နေရာ</label>
+      <select id="source">
+        <option>FB</option>
+        <option>TT</option>
+        <option>Viber</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="phone">ဖုန်းနံပါတ် *</label>
+      <input id="phone" type="tel" inputmode="tel"
+             placeholder="ဥပမာ 09797839879">
+    </div>
+
+    <div class="field">
+      <label for="receiver">လက်ခံသူအမည် *</label>
+      <input id="receiver" placeholder="လက်ခံမည့်သူ">
+    </div>
+
+    <div class="field full">
+      <label for="address">လိပ်စာ *</label>
+      <textarea id="address"
+                placeholder="အိမ်အမှတ်၊ လမ်း၊ မြို့နယ်"></textarea>
+      <span class="hint">
+        လိပ်စာမရသေးလျှင် Pending ဟု ဖြည့်ပါ။
+      </span>
+    </div>
+
+    <div class="field full">
+      <label for="payment">ငွေပေးချေမှု *</label>
+      <select id="payment">
+        <option value="">ရွေးချယ်ပါ</option>
+        <option value="paid">Paid</option>
+        <option value="unpaid">‼️မရှင်းရသေးပါ။</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="product-head">
+    <h2 style="margin:0">၂။ ပစ္စည်းများ</h2>
+    <span class="pill">ဈေးနှုန်း = တစ်ခုစာ</span>
+  </div>
+
+  <p class="muted">
+    Product တစ်ခုစီအတွက် အမည်၊ တစ်ခုစာဈေးနှုန်း၊
+    Color၊ Detail၊ Size နဲ့ Quantity ဖြည့်ပါ။
+  </p>
+
+  <div id="products"></div>
+
+  <button type="button" class="secondary" id="addProduct">
+    ＋ ပစ္စည်းအသစ်ထည့်ရန်
+  </button>
+</section>
+
+<section class="card">
+  <h2>၃။ ပို့ဆောင်ရေး Note</h2>
+
+  <div class="grid">
+    <div class="field full">
+      <label for="notePreset">ကြိုတင်သတ်မှတ်ထားသော Note</label>
+
+      <select id="notePreset">
+        <option value="">Note မထည့်ပါ</option>
+        <option value="ယခင်အမှာများနှင့်ပေါင်းပို့ပေးပါရန်။">
+          ယခင်အမှာများနှင့်ပေါင်းပို့ပေးပါရန်။
+        </option>
+        <option value="မပို့မီ ဖုန်းကြိုဆက်ပေးပါရန်။">
+          မပို့မီ ဖုန်းကြိုဆက်ပေးပါရန်။
+        </option>
+        <option value="Royal နှင့်ပို့ပေးပါရန်">
+          Royal နှင့်ပို့ပေးပါရန်
+        </option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label for="customNote">
+        ကိုယ်ပိုင် Note (ဖြည့်ထားလျှင် အပေါ်က Note ကို အစားထိုးမည်)
+      </label>
+      <textarea id="customNote" placeholder="လိုအပ်မှသာ ရေးပါ"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>၄။ စစ်ဆေးချက်နှင့် စုစုပေါင်း</h2>
+
+  <div id="validation" aria-live="polite"></div>
+
+  <div class="summary">
+    <div class="summary-row">
+      <span>ပစ္စည်းအရေအတွက် (Quantity ပေါင်း)</span>
+      <strong id="totalQty">0</strong>
+    </div>
+
+    <div class="summary-row">
+      <span>စုစုပေါင်းငွေ</span>
+      <strong id="totalPrice">0 Mmk</strong>
+    </div>
+  </div>
+
+  <p class="hint">
+    ဒီ Tool က သင်ဖြည့်ထားတဲ့အချက်အလက်ကိုသာ တွက်ချက်ပေးတာဖြစ်ပြီး
+    Customer message ကို အလိုအလျောက်မဖတ်ပါ။
+    မပို့မီ မူရင်းစာနဲ့ ဈေးနှုန်းကို ပြန်စစ်ပါ။
+  </p>
+</section>
+
+<section class="card">
+  <h2>၅။ Viber မှာ ပို့ရန် စာသား</h2>
+
+  <textarea id="output" readonly
+            aria-label="Viber order text"></textarea>
+
+  <div class="actions" style="margin-top:10px">
+    <button type="button" class="primary" id="copyBtn" disabled>
+      စာသားကူးရန်
+    </button>
+
+    <button type="button" class="ghost" id="selectBtn">
+      စာသားရွေးရန်
+    </button>
+
+    <button type="button" class="ghost" id="resetBtn">
+      အော်ဒါအသစ်စရန်
+    </button>
+  </div>
+
+  <div id="copyStatus" class="muted" aria-live="polite"></div>
+</section>
+
+<footer class="muted">
+  Order data ကို server ဆီ အလိုအလျောက်မပို့ပါ။
+  Browser refresh လုပ်ရင် ဖြည့်ထားတာ ပျောက်နိုင်ပါတယ်။
+</footer>
+
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const digitMap = {
+  "၀":"0", "၁":"1", "၂":"2", "၃":"3", "၄":"4",
+  "၅":"5", "၆":"6", "၇":"7", "၈":"8", "၉":"9"
+};
+
+const englishDigits = value =>
+  String(value ?? "").replace(/[၀-၉]/g, ch => digitMap[ch]);
+
+const clean = value => String(value ?? "").trim();
+
+const money = value =>
+  Math.round(value).toLocaleString("en-US");
+
+const productsEl = $("products");
+
+function makeField(label, type, placeholder, className = "", attrs = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "field " + className;
+
+  const lab = document.createElement("label");
+  lab.textContent = label;
+
+  const input = document.createElement("input");
+  input.type = type;
+  input.placeholder = placeholder || "";
+
+  if (type === "number") {
+    input.inputMode = "numeric";
+  }
+
+  Object.entries(attrs).forEach(([key, value]) => {
+    input.setAttribute(key, value);
+  });
+
+  wrap.append(lab, input);
+
+  return { wrap, input };
+}
+
+function renumberVariants(product) {
+  [...product.querySelectorAll(".variant")].forEach((variant, index) => {
+    variant.querySelector(".variant-head span").textContent =
+      "Variant " + (index + 1);
+  });
+}
+
+function addVariant(product) {
+  const list = product.querySelector(".variants");
+  const box = document.createElement("div");
+  box.className = "variant";
+
+  const head = document.createElement("div");
+  head.className = "variant-head";
+
+  const title = document.createElement("span");
+  title.textContent = "Variant " + (list.children.length + 1);
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "danger";
+  remove.textContent = "ဖယ်ရှားရန်";
+
+  remove.addEventListener("click", () => {
+    box.remove();
+    renumberVariants(product);
+    update();
+  });
+
+  head.append(title, remove);
+
+  const grid = document.createElement("div");
+  grid.className = "grid";
+
+  const color = makeField(
+    "Color / Code *", "text", "ဥပမာ 03 Gray"
+  );
+
+  const detail = makeField(
+    "Detail (မရှိလည်းရ)", "text", "ဥပမာ Short Sleeve"
+  );
+
+  const size = makeField(
+    "Size *", "text", "ဥပမာ M"
+  );
+
+  const qty = makeField(
+    "Quantity *", "number", "1", "",
+    { min: "1", step: "1", inputmode: "numeric" }
+  );
+
+  qty.input.value = "1";
+
+  grid.append(color.wrap, detail.wrap, size.wrap, qty.wrap);
+  box.append(head, grid);
+  list.append(box);
+
+  [color.input, detail.input, size.input, qty.input].forEach(input => {
+    input.addEventListener("input", update);
+  });
+}
+
+function renumberProducts() {
+  [...productsEl.querySelectorAll(".product")].forEach((product, index) => {
+    product.querySelector(".product-head strong").textContent =
+      "Product " + (index + 1);
+  });
+}
+
+function addProduct() {
+  const product = document.createElement("div");
+  product.className = "product";
+
+  const head = document.createElement("div");
+  head.className = "product-head";
+
+  const title = document.createElement("strong");
+  title.textContent = "Product " +
+    (productsEl.querySelectorAll(".product").length + 1);
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "danger";
+  remove.textContent = "ပစ္စည်းဖယ်ရန်";
+
+  remove.addEventListener("click", () => {
+    product.remove();
+    renumberProducts();
+    update();
+  });
+
+  head.append(title, remove);
+
+  const grid = document.createElement("div");
+  grid.className = "grid";
+
+  const country = document.createElement("div");
+  country.className = "field";
+
+  const countryLabel = document.createElement("label");
+  countryLabel.textContent = "နိုင်ငံအလံ";
+
+  const countrySelect = document.createElement("select");
+
+  [
+    ["🇹🇭", "🇹🇭 Thailand"],
+    ["🇯🇵", "🇯🇵 Japan"],
+    ["", "အခြား / အလံမထည့်ပါ"]
+  ].forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    countrySelect.append(option);
+  });
+
+  country.append(countryLabel, countrySelect);
+
+  const name = makeField(
+    "Product Name *", "text", "ဥပမာ Polo Sweater"
+  );
+
+  const titleDetail = makeField(
+    "Product Title Detail (မရှိလည်းရ)",
+    "text",
+    "ဥပမာ Summer Collection",
+    "full"
+  );
+
+  const price = makeField(
+    "တစ်ခုစာဈေးနှုန်း (MMK) *",
+    "number",
+    "ဥပမာ 72900",
+    "",
+    { min: "1", step: "1", inputmode: "numeric" }
+  );
+
+  grid.append(country, name.wrap, titleDetail.wrap, price.wrap);
+
+  const variantTitle = document.createElement("p");
+  variantTitle.className = "muted";
+  variantTitle.style.margin = "12px 0 4px";
+  variantTitle.textContent = "အရောင် / Size အမျိုးအစားများ";
+
+  const variants = document.createElement("div");
+  variants.className = "variants";
+
+  const addVariantButton = document.createElement("button");
+  addVariantButton.type = "button";
+  addVariantButton.className = "ghost";
+  addVariantButton.textContent = "＋ Variant ထပ်ထည့်ရန်";
+
+  addVariantButton.addEventListener("click", () => {
+    addVariant(product);
+    update();
+  });
+
+  product.append(
+    head, grid, variantTitle, variants, addVariantButton
+  );
+
+  productsEl.append(product);
+
+  [countrySelect, name.input, titleDetail.input, price.input].forEach(input => {
+    input.addEventListener("input", update);
+    input.addEventListener("change", update);
+  });
+
+  addVariant(product);
+  renumberProducts();
+  update();
+}
+
+function readOrder() {
+  const errors = [];
+
+  const customer = clean($("customer").value);
+  const source = $("source").value;
+  const phone = englishDigits(clean($("phone").value)).replace(/\s+/g, "");
+  const receiver = clean($("receiver").value);
+  const address = clean($("address").value);
+  const payment = $("payment").value;
+
+  if (!customer) errors.push("Customer အမည် ဖြည့်ပါ။");
+
+  if (!phone) {
+    errors.push("ဖုန်းနံပါတ် ဖြည့်ပါ။");
+  } else if (!/^\+?\d{7,15}$/.test(phone.replace(/[-()]/g, ""))) {
+    errors.push("ဖုန်းနံပါတ်ကို စစ်ပါ (ဂဏန်း 7–15 လုံး လိုအပ်သည်)။");
+  }
+
+  if (!receiver) errors.push("လက်ခံသူအမည် ဖြည့်ပါ။");
+  if (!address) errors.push("လိပ်စာ မရသေးလျှင် Pending ဟု ဖြည့်ပါ။");
+  if (!payment) errors.push("ငွေပေးချေမှုအခြေအနေ ရွေးပါ။");
+
+  const products = [];
+  const productEls = [...productsEl.querySelectorAll(".product")];
+
+  if (!productEls.length) {
+    errors.push("အနည်းဆုံး Product တစ်ခု ထည့်ပါ။");
+  }
+
+  let totalQty = 0;
+  let totalPrice = 0;
+  const equationParts = [];
+
+  productEls.forEach((el, pi) => {
+    const inputs = [...el.querySelectorAll(".grid input")];
+
+    const productName = clean(inputs[0].value);
+    const titleDetail = clean(inputs[1].value);
+    const priceText = clean(inputs[2].value);
+    const country = el.querySelector(".grid select").value;
+    const price = Number(priceText);
+    const label = "Product " + (pi + 1);
+
+    if (!productName) {
+      errors.push(label + ": Product Name ဖြည့်ပါ။");
+    }
+
+    if (
+      !priceText ||
+      !Number.isFinite(price) ||
+      !Number.isInteger(price) ||
+      price <= 0
+    ) {
+      errors.push(
+        label + ": တစ်ခုစာဈေးနှုန်းကို အပေါင်းကိန်းပြည့် ဖြည့်ပါ။"
+      );
+    }
+
+    const variants = [];
+    let filled = 0;
+
+    [...el.querySelectorAll(".variant")].forEach((variant, vi) => {
+      const fields = [...variant.querySelectorAll("input")];
+
+      const color = clean(fields[0].value);
+      const detail = clean(fields[1].value);
+      const size = clean(fields[2].value);
+      const qtyText = clean(fields[3].value);
+
+      if (!color && !detail && !size) {
+        if (qtyText && qtyText !== "1") {
+          errors.push(
+            `${label}, Variant ${vi + 1}: Color/Size မဖြည့်ဘဲ Quantity ထည့်ထားသည်။`
+          );
+        }
+        return;
+      }
+
+      filled++;
+
+      if (!color) {
+        errors.push(`${label}, Variant ${vi + 1}: Color / Code ဖြည့်ပါ။`);
+      }
+
+      if (!size) {
+        errors.push(`${label}, Variant ${vi + 1}: Size ဖြည့်ပါ။`);
+      }
+
+      const quantity = Number(qtyText);
+
+      if (
+        !qtyText ||
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        quantity > 999
+      ) {
+        errors.push(
+          `${label}, Variant ${vi + 1}: Quantity ကို 1–999 အတွင်း ဖြည့်ပါ။`
+        );
+      }
+
+      const qty =
+        Number.isInteger(quantity) && quantity >= 1 && quantity <= 999
+          ? quantity
+          : 0;
+
+      const validPrice =
+        Number.isInteger(price) && price > 0;
+
+      const lineTotal = validPrice ? price * qty : 0;
+
+      variants.push({
+        color,
+        detail,
+        size,
+        qty,
+        lineTotal
+      });
+
+      if (qty && validPrice) {
+        totalQty += qty;
+        totalPrice += lineTotal;
+
+        for (let i = 0; i < qty; i++) {
+          equationParts.push(price);
+        }
+      }
+    });
+
+    if (!filled) {
+      errors.push(
+        label + ": အနည်းဆုံး Variant တစ်ခုမှာ Color နဲ့ Size ဖြည့်ပါ။"
+      );
+    }
+
+    products.push({
+      country,
+      name: productName,
+      titleDetail,
+      price,
+      variants
+    });
+  });
+
+  return {
+    errors,
+    customer,
+    source,
+    phone,
+    receiver,
+    address: address || "Pending ‼️",
+    payment,
+    products,
+    totalQty,
+    totalPrice,
+    equationParts
+  };
+}
+
+function buildOutput(order) {
+  const lines = [
+    `${order.customer || "[Customer အမည် မဖြည့်ရသေးပါ]"} (${order.source})`,
+    ""
+  ];
+
+  order.products.forEach(product => {
+    lines.push(
+      [product.country, `**${product.name || "[Product Name မဖြည့်ရသေးပါ]"}**`]
+        .filter(Boolean)
+        .join(" ")
+    );
+
+    if (product.titleDetail) {
+      lines.push(product.titleDetail);
+    }
+
+    const filledVariants = product.variants.filter(
+      variant => variant.color || variant.detail || variant.size
+    );
+
+    filledVariants.forEach(variant => {
+      const colorDetail = [
+        variant.color,
+        variant.detail
+      ].filter(Boolean).join(" | ");
+
+      if (filledVariants.length > 1) {
+        lines.push(
+          `${colorDetail || "[Color မဖြည့်ရသေးပါ]"}${
+            variant.size
+              ? ` (Size-${variant.size})`
+              : " (Size မဖြည့်ရသေးပါ)"
+          }`
+        );
+      } else {
+        lines.push(colorDetail || "[Color မဖြည့်ရသေးပါ]");
+        lines.push(
+          variant.size ? `Size - ${variant.size}` : "Size - Pending"
+        );
+      }
+
+      if (
+        Number.isInteger(product.price) &&
+        product.price > 0 &&
+        variant.qty > 0
+      ) {
+        lines.push(
+          variant.qty === 1
+            ? `${money(product.price)} Mmk`
+            : `${money(product.price)} Mmk × ${variant.qty} = ${money(product.price * variant.qty)} Mmk`
+        );
+      } else {
+        lines.push("[ဈေးနှုန်း စစ်ဆေးရန်]");
+      }
+    });
+
+    lines.push("");
+  });
+
+  lines.push(`**Total - ${order.totalQty} Items**`);
+
+  if (order.equationParts.length) {
+    lines.push(
+      `${order.equationParts.map(money).join("+")}=${money(order.totalPrice)} Mmk`
+    );
+  } else {
+    lines.push("[Total တွက်ရန် အော်ဒါအချက်အလက် ပြည့်စုံအောင်ဖြည့်ပါ]");
+  }
+
+  lines.push(
+    "",
+    order.payment === "paid"
+      ? "**Paid**"
+      : order.payment === "unpaid"
+        ? "**‼️မရှင်းရသေးပါ။**"
+        : "[Payment မရွေးရသေးပါ]",
+    "",
+    order.phone || "[ဖုန်းနံပါတ် မဖြည့်ရသေးပါ]",
+    order.receiver || "[လက်ခံသူအမည် မဖြည့်ရသေးပါ]",
+    order.address
+  );
+
+  const note =
+    clean($("customNote").value) || $("notePreset").value;
+
+  if (note) {
+    lines.push("", `⚠️ **Note -** ${note}`);
+  }
+
+  return lines.join("\n");
+}
+
+function update() {
+  const order = readOrder();
+
+  $("totalQty").textContent = String(order.totalQty);
+  $("totalPrice").textContent = `${money(order.totalPrice)} Mmk`;
+  $("output").value = buildOutput(order);
+
+  const validation = $("validation");
+  validation.replaceChildren();
+
+  if (order.errors.length) {
+    const warning = document.createElement("div");
+    warning.className = "warning";
+
+    const strong = document.createElement("strong");
+    strong.textContent =
+      `စစ်ဆေးရန်လိုသေးသည် (${order.errors.length} ချက်)`;
+
+    const list = document.createElement("ul");
+    list.style.marginBottom = "0";
+
+    order.errors.forEach(error => {
+      const item = document.createElement("li");
+      item.textContent = error;
+      list.append(item);
+    });
+
+    warning.append(strong, list);
+    validation.append(warning);
+  } else {
+    const success = document.createElement("div");
+    success.className = "success";
+    success.textContent =
+      "လိုအပ်သောအချက်များ ပြည့်စုံပါပြီ။ မပို့မီ Customer message နဲ့ ဈေးနှုန်းကို ပြန်စစ်ပါ။";
+
+    validation.append(success);
+  }
+
+  $("copyBtn").disabled = order.errors.length > 0;
+  $("copyStatus").textContent = "";
+}
+
+async function copyOutput() {
+  const output = $("output");
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(output.value);
+    } else {
+      output.focus();
+      output.select();
+      output.setSelectionRange(0, output.value.length);
+
+      if (!document.execCommand("copy")) {
+        throw new Error("Copy failed");
+      }
+    }
+
+    $("copyStatus").textContent =
+      "စာသားကူးပြီးပါပြီ။ Viber ထဲမှာ Paste လုပ်နိုင်ပါပြီ။";
+  } catch (error) {
+    output.focus();
+    output.select();
+    output.setSelectionRange(0, output.value.length);
+
+    $("copyStatus").textContent =
+      "အလိုအလျောက် Copy မရပါ။ စာသားကို ဖိထားပြီး Copy ရွေးပါ။";
+  }
+}
+
+function resetOrder() {
+  if (!confirm("ဖြည့်ထားသော အော်ဒါအချက်အလက်အားလုံးကို ဖျက်ပြီး အသစ်စမလား။")) {
+    return;
+  }
+
+  ["customer", "phone", "receiver", "address", "customNote"].forEach(id => {
+    $(id).value = "";
+  });
+
+  $("source").value = "FB";
+  $("payment").value = "";
+  $("notePreset").value = "";
+
+  productsEl.replaceChildren();
+  addProduct();
+  update();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+[
+  "customer",
+  "source",
+  "phone",
+  "receiver",
+  "address",
+  "payment",
+  "notePreset",
+  "customNote"
+].forEach(id => {
+  $(id).addEventListener("input", update);
+  $(id).addEventListener("change", update);
+});
+
+$("phone").addEventListener("input", () => {
+  const input = $("phone");
+  const start = input.selectionStart;
+  const converted = englishDigits(input.value);
+
+  if (input.value !== converted) {
+    input.value = converted;
+
+    try {
+      input.setSelectionRange(start, start);
+    } catch (error) {}
+  }
+});
+
+$("addProduct").addEventListener("click", addProduct);
+$("copyBtn").addEventListener("click", copyOutput);
+
+$("selectBtn").addEventListener("click", () => {
+  const output = $("output");
+
+  output.focus();
+  output.select();
+  output.setSelectionRange(0, output.value.length);
+
+  $("copyStatus").textContent =
+    "စာသားရွေးထားပါပြီ။ Copy ကိုနှိပ်ပါ။";
+});
+
+$("resetBtn").addEventListener("click", resetOrder);
+
+addProduct();
+update();
+</script>
+
+</body>
+</html>
